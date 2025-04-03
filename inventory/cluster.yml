@@ -1,0 +1,22 @@
+jumpbox:
+  hosts:
+    ibis:
+      ansible_python_interpreter: /usr/bin/python3.11
+server:
+  hosts:
+    ib-sv:
+      ansible_python_interpreter: /usr/bin/python3.10
+nodes:
+  hosts:
+    ib-w1:
+      ansible_python_interpreter: /usr/bin/python3.10
+    ib-w2:
+      ansible_python_interpreter: /usr/bin/python3.10
+cluster:
+  children:
+    jumpbox:
+    server:
+    nodes:
+
+
+
