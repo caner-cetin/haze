@@ -40,7 +40,7 @@
       shell:
         cmd: |
           set -e 
-          processed_urls=$(cat downloads.txt | sed 's/arm64/amd64/g')
+          processed_urls=$(cat downloads.txt)
           for url in ${processed_urls}; do
             wget -q --show-progress --https-only --timestamping -P binaries "${url}"
           done
