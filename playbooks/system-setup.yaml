@@ -1,0 +1,47 @@
+- name: "general system setup for cluster"
+  hosts: cluster
+  tasks:
+    - name: "modify dns"
+      lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver 8.8.8.8"
+        create: yes
+      become: true
+      become_user: root
+    - name: "update system"
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400
+      become: true
+      become_user: root
+    - name: "install required utilities"
+      package:
+        name:
+          - curl
+          - wget
+          - ufw
+          - openssl
+        state: latest
+      become: true
+      become_user: root
+    - name: "install k3s binary"
+      shell: |
+        set -e
+        wget https://github.com/k3s-io/k3s/releases/download/v1.32.3%2Bk3s1/k3s-arm64
+        sudo mv k3s-arm64 /usr/local/bin/k3s
+        sudo chmod +x /usr/local/bin/k3s
+      become: true
+      args:
+        creates: /usr/local/bin/k3s
+    - name: "append hosts file"
+      lineinfile:
+        state: present
+        path: /etc/hosts 
+        insertafter: EOF
+        line: |
+          192.168.50.11 master   master.unac.local
+          192.168.50.12 server-1 server-1.unac.local
+          192.168.50.13 server-2 server-2.unac.local
+          192.168.50.14 etcd     etcd.unac.local
+      become: true

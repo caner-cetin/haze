@@ -1,0 +1,48 @@
+- name: "setup master"
+  hosts: master
+  tasks:
+    - name: "check if k3s is already running"
+      command: systemctl is-active k3s
+      register: k3s_status
+      failed_when: false
+      changed_when: false
+      become: true
+      
+    - name: "create k3s config directory"
+      file:
+        path: /etc/rancher/k3s
+        state: directory
+        mode: '0755'
+      become: true
+      when: k3s_status.rc != 0
+    
+    - name: "copy k3s config file"
+      copy:
+        dest: /etc/rancher/k3s/config.yaml
+        content: |
+          cluster-init: true
+          cluster-cidr: "10.42.0.0/16"
+          token: "{{ k3s_server_token }}"
+          agent-token: "{{ k3s_agent_token }}"
+          node-name: "{{ inventory_hostname }}"
+          bind-address: "0.0.0.0"
+          https-listen-port: "6443"
+          cluster-domain: unac.local
+          tls-san: 
+            - master.unac.local
+            - etcd.unac.local
+        mode: '0600'
+      become: true
+      when: k3s_status.rc != 0
+      
+    - name: "install k3s as a service"
+      shell: curl -sfL https://get.k3s.io | sh -
+      become: true
+      when: k3s_status.rc != 0
+      
+    - name: "ensure k3s service is running"
+      systemd:
+        name: k3s
+        state: started
+        enabled: yes
+      become: true

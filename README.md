@@ -1,9 +1,10 @@
 ## haze
-k8s demonstration project
+doing stuff
 
-## steps
 ```bash
 vagrant up 
-ansible cluster -a   
+ansible-playbook playbooks/system-setup.yaml   
+ansible-playbook playbooks/firewall-setup.yaml   
+ansible-playbook playbooks/server-master-setup.yaml   
+ansible-playbook playbooks/server-node-setup.yaml   
 ```
-

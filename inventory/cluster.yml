@@ -1,22 +1,27 @@
-jumpbox:
+master:
   hosts:
-    ibis:
+    unac-sv-master:
       ansible_python_interpreter: /usr/bin/python3.11
-server:
+datastores:
   hosts:
-    ib-sv:
-      ansible_python_interpreter: /usr/bin/python3.10
-nodes:
+    unac-etcd:
+      ansible_python_interpreter: /usr/bin/python3.11
+servers:
   hosts:
-    ib-w1:
-      ansible_python_interpreter: /usr/bin/python3.10
-    ib-w2:
-      ansible_python_interpreter: /usr/bin/python3.10
+    unac-sv-1:
+      ansible_python_interpreter: /usr/bin/python3.11
+    unac-sv-2:
+      ansible_python_interpreter: /usr/bin/python3.11
 cluster:
   children:
-    jumpbox:
-    server:
-    nodes:
-
+    master:
+    servers:
+    datastores:
+all:
+  vars:
+    # hardcoded for demonstration purposes
+    # ansible vault, 1password (my choice would be this), hashicorp vault or whatever on prod.
+    k3s_server_token: 0f220f54b54b13c0cc6d11c174183add44557308c08306e62742dafdf8700b590352b1aba3a60adcd79a6ff6ce680a4dbe6e24e80ac8ca78b95731d0e84aeef0
+    k3s_agent_token:  c16b1e6cbbd617e64511d4600389ec2ca919b9456f2fc011a60b2aab55d5120dc728e285f85feb0f486234129baa37ce4c1b257756a45a1e9bb363feb1d022a5
 
 

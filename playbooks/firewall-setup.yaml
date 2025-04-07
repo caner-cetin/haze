@@ -1,0 +1,79 @@
+- name: "setup firewall"
+  hosts: cluster
+  become: true
+  tasks:
+    - name: "allow ssh"
+      community.general.ufw:
+        rule: allow
+        name: OpenSSH
+        state: enabled
+        
+    - name: "allow http"
+      community.general.ufw:
+        rule: allow
+        src: "any"
+        port: "80"
+        
+    - name: "allow https"
+      community.general.ufw:
+        rule: allow
+        src: "any"
+        port: "443"
+        
+    - name: "allow api servers (192.x)"
+      community.general.ufw:
+        rule: allow
+        src: "192.168.50.0/24"
+        port: "6443"
+        proto: tcp
+
+    - name: "allow api servers (172.x)"
+      community.general.ufw:
+        rule: allow
+        src: "172.16.0.0/16"
+        port: "6443"
+        proto: tcp
+        
+    
+    - name: "allow etcd (192.x)"
+      community.general.ufw:
+        rule: allow
+        src: "192.168.50.0/24"
+        port: "2379"
+        proto: tcp
+    
+    - name: "allow etcd (172.x)"
+      community.general.ufw:
+        rule: allow
+        src: "172.16.0.0/16"
+        port: "2379"
+        proto: tcp
+
+    - name: "allow etcd peer communication (192.x)"
+      community.general.ufw:
+        rule: allow
+        src: "192.168.50.0/24"
+        port: "2380"
+        proto: tcp
+
+    - name: "allow etcd peer communication (172.x)"
+      community.general.ufw:
+        rule: allow
+        src: "172.16.0.0/16"
+        port: "2380"
+        proto: tcp
+        
+    - name: "allow pods"
+      community.general.ufw:
+        rule: allow
+        src: "10.42.0.0/16"
+        dest: any
+        
+    - name: "Set logging"
+      community.general.ufw:
+        logging: 'on'
+        
+    - name: "enable ufw with default reject policy"
+      community.general.ufw:
+        state: enabled
+        policy: reject
